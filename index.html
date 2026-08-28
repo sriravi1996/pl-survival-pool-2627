@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PL Survival Pool 2026/27</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --card: #1e1e1e;
+      --border: #2a2a2a;
+      --accent: #38003c;
+      --pl-purple: #38003c;
+      --pl-pink: #ff2882;
+      --pl-cyan: #00ff85;
+      --text: #f0f0f0;
+      --muted: #888;
+      --done: #2a2a2a;
+      --star-gold: #f5a623;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #38003c 0%, #1a0020 60%, #0d0d0d 100%);
+      border-bottom: 2px solid var(--pl-pink);
+      padding: 28px 24px 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .pl-badge {
+      background: var(--pl-pink);
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    header h1 {
+      font-size: clamp(18px, 3vw, 26px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    header h1 span { color: var(--pl-pink); }
+    .header-meta {
+      margin-left: auto;
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .header-meta b { color: var(--pl-cyan); }
+
+    /* ── Summary bar ── */
+    .summary {
+      display: flex;
+      gap: 12px;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 18px;
+      text-align: center;
+      min-width: 110px;
+    }
+    .stat-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--pl-cyan);
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+
+    /* ── Budget tracker ── */
+    .budget-wrap {
+      padding: 20px 24px 0;
+    }
+    .budget-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .budget-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .budget-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px 5px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .budget-chip .dots {
+      display: flex; gap: 3px;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border);
+    }
+    .dot.used { background: var(--pl-pink); }
+    .dot.done-all { background: #555; }
+    .budget-chip.exhausted {
+      opacity: 0.45;
+      border-color: transparent;
+    }
+    .budget-chip.exhausted .dot { background: #444; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 0 24px 20px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--pl-pink);
+      border-color: var(--pl-pink);
+      color: #fff;
+    }
+
+    /* ── GW Cards ── */
+    .gw-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+      padding: 0 24px 40px;
+    }
+
+    .gw-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.15s, border-color 0.15s;
+      position: relative;
+    }
+    .gw-card:hover {
+      transform: translateY(-2px);
+      border-color: #444;
+    }
+    .gw-card.current {
+      border-color: var(--pl-cyan);
+      box-shadow: 0 0 0 1px var(--pl-cyan), 0 4px 24px rgba(0,255,133,0.12);
+    }
+    .gw-card.done-card {
+      opacity: 0.55;
+    }
+    .gw-card.bye-card {
+      border-color: var(--pl-pink);
+      background: #1a0a10;
+    }
+
+    /* current badge */
+    .current-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--pl-cyan);
+      color: #000;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 3px 7px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    .card-header {
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .gw-num {
+      background: var(--pl-purple);
+      border: 1px solid var(--pl-pink);
+      color: var(--pl-pink);
+      font-weight: 900;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+    }
+    .bye-card .gw-num {
+      background: #3a0010;
+      border-color: var(--pl-pink);
+      color: var(--pl-pink);
+    }
+    .card-title-block { flex: 1; }
+    .card-date {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .card-pick {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .card-pick .vs {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+    .card-pick .opp {
+      color: var(--pl-pink);
+    }
+    .home-badge {
+      background: rgba(0,255,133,0.12);
+      color: var(--pl-cyan);
+      border: 1px solid rgba(0,255,133,0.3);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .stars {
+      color: var(--star-gold);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .card-body { padding: 12px 16px; }
+
+    /* reason */
+    .pick-reason {
+      font-size: 12.5px;
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .pick-reason strong { color: var(--pl-cyan); }
+
+    /* alternatives */
+    .alts-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .alt-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      background: var(--surface);
+      border-radius: 6px;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    .alt-team { font-weight: 600; flex: 1; }
+    .alt-reason { color: var(--muted); font-size: 11px; flex: 2; }
+    .alt-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .alt-badge.risky { background: #3a1500; color: #ff7043; }
+    .alt-badge.away { background: #1a1a2e; color: #7986cb; }
+    .alt-badge.used { background: #2a2a2a; color: #666; }
+    .alt-badge.weaker { background: #1a2a1a; color: #66bb6a; }
+
+    /* budget pill inside card */
+    .card-footer {
+      padding: 8px 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .use-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .use-pill.first { border-color: #f5a62366; color: var(--star-gold); }
+    .use-pill.second { border-color: var(--pl-pink); color: var(--pl-pink); }
+    .use-pill.bye-use { border-color: var(--pl-pink); color: var(--pl-pink); }
+
+    .result-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 10px;
+    }
+    .result-pill.pending { background: #222; color: #666; }
+    .result-pill.win { background: rgba(0,255,133,0.15); color: var(--pl-cyan); border: 1px solid rgba(0,255,133,0.4); }
+    .result-pill.loss { background: rgba(255,40,130,0.15); color: var(--pl-pink); border: 1px solid rgba(255,40,130,0.4); }
+
+    /* BYE card special */
+    .bye-content {
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .bye-icon { font-size: 32px; margin-bottom: 8px; }
+    .bye-title { font-size: 16px; font-weight: 800; color: var(--pl-pink); margin-bottom: 6px; }
+    .bye-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* Phase dividers */
+    .phase-header {
+      padding: 8px 24px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .phase-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .phase-header span {
+      background: var(--pl-purple);
+      color: var(--pl-pink);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+    }
+
+    /* responsive */
+    @media (max-width: 600px) {
+      header { padding: 20px 16px; }
+      .gw-grid { padding: 0 12px 40px; gap: 12px; }
+      .summary, .budget-wrap, .filter-bar { padding-left: 16px; padding-right: 16px; }
+      .phase-header { padding-left: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="pl-badge">PL 2026/27</div>
+  <div>
+    <h1>Survival Pool <span>Dashboard</span></h1>
+    <div style="font-size:12px;color:var(--muted);margin-top:3px;">38-week pick strategy · 1 BYE used · 20 teams · max 2× per club</div>
+  </div>
+  <div class="header-meta">
+    Season: <b>Aug 21, 2026 – May 30, 2027</b><br>
+    BYE: <b>GW17 (Boxing Day)</b><br>
+    Status: <b style="color:var(--pl-cyan)">Active</b>
+  </div>
+</header>
+
+<!-- Summary bar -->
+<div class="summary">
+  <div class="stat"><div class="stat-val">38</div><div class="stat-lbl">Total Weeks</div></div>
+  <div class="stat"><div class="stat-val">1</div><div class="stat-lbl">BYE Used (GW17)</div></div>
+  <div class="stat"><div class="stat-val" id="wins-stat">—</div><div class="stat-lbl">Wins</div></div>
+  <div class="stat"><div class="stat-val" id="pending-stat">38</div><div class="stat-lbl">Pending</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--pl-pink)" id="elite-stat">9</div><div class="stat-lbl">Elite Picks Left</div></div>
+  <div class="stat"><div class="stat-val">GW17</div><div class="stat-lbl">BYE Week</div></div>
+</div>
+
+<!-- Team Budget -->
+<div class="budget-wrap">
+  <div class="budget-title">Team Budget Tracker (max 2× per team)</div>
+  <div class="budget-grid" id="budget-grid"></div>
+</div>
+
+<!-- Filters -->
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filter('all', this)">All Weeks</button>
+  <button class="filter-btn" onclick="filter('upcoming', this)">Upcoming</button>
+  <button class="filter-btn" onclick="filter('done', this)">Completed</button>
+  <button class="filter-btn" onclick="filter('elite', this)">Elite Picks</button>
+  <button class="filter-btn" onclick="filter('risky', this)">Risky Picks</button>
+</div>
+
+<div id="gw-container"></div>
+
+<script>
+const CURRENT_GW = 1;
+
+const BUDGET = [
+  { team: "Man City",    uses: [1, 3],  stars: 5 },
+  { team: "Arsenal",     uses: [6, 8],  stars: 5 },
+  { team: "Liverpool",   uses: [2, 13], stars: 5 },
+  { team: "Chelsea",     uses: [4, 14], stars: 4 },
+  { team: "Man Utd",     uses: [12,18], stars: 4 },
+  { team: "Tottenham",   uses: [7, 11], stars: 4 },
+  { team: "Brighton",    uses: [15,16], stars: 3 },
+  { team: "Newcastle",   uses: [9, 20], stars: 3 },
+  { team: "Nottm Forest",uses: [5, 19], stars: 3 },
+  { team: "Everton",     uses: [10,30], stars: 3 },
+  { team: "Aston Villa", uses: [21,23], stars: 3 },
+  { team: "Fulham",      uses: [22,31], stars: 2 },
+  { team: "Brentford",   uses: [24,27], stars: 2 },
+  { team: "Crystal Palace",uses:[25,28],stars: 2 },
+  { team: "Bournemouth", uses: [26,32], stars: 2 },
+  { team: "Leeds",       uses: [29,35], stars: 2 },
+  { team: "Sunderland",  uses: [33,36], stars: 1 },
+  { team: "Hull",        uses: [34,37], stars: 1 },
+  { team: "Ipswich",     uses: [38],    stars: 1 },
+  { team: "Coventry",    uses: [],      stars: 1 },
+];
+
+const GWS = [
+  {
+    gw: 1, date: "Aug 21–24, 2026", pick: "Man City", ha: "H", opp: "Bournemouth",
+    stars: 5, use: "1st", phase: "hot-start",
+    reason: `Opening day, full fitness, no fatigue, no injuries yet. <strong>Etihad Stadium</strong> vs a mid-table Bournemouth side is about as safe as it gets in the PL. Man City are title contenders with squad depth and home advantage — Bournemouth historically concede heavily away from home to top-six sides.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Coventry", badge: "away", why: "Also a great pick — GW6 is saved for Arsenal vs a tougher opponent" },
+      { team: "Liverpool", matchup: "A vs Newcastle", badge: "away", why: "Liverpool AWAY on opening day at a hostile St. James' Park — too risky" },
+      { team: "Chelsea", matchup: "A vs Fulham", badge: "away", why: "Away London derby — unpredictable, skip" },
+      { team: "Tottenham", matchup: "A vs Brentford", badge: "away", why: "Away — Gtech is a banana-skin ground" },
+    ]
+  },
+  {
+    gw: 2, date: "Aug 28–31, 2026", pick: "Liverpool", ha: "H", opp: "Nottm Forest",
+    stars: 4, use: "1st", phase: "hot-start",
+    reason: `<strong>Anfield</strong> is statistically one of the toughest away grounds in Europe. Liverpool at home in the first month of the season — full squad, flying pre-season form. Nottm Forest are decent but punching upward away at Anfield. Man City is saved (already used GW1) so Liverpool is the cleanest next pick.`,
+    alts: [
+      { team: "Man City", matchup: "A vs Crystal Palace", badge: "away", why: "Man City away at Selhurst Park — upsets happen here, save Man City for GW3" },
+      { team: "Chelsea", matchup: "H vs Brighton", badge: "risky", why: "Brighton are a strong, tactically disciplined side — not a banker" },
+      { team: "Man Utd", matchup: "H vs Ipswich", badge: "weaker", why: "Decent pick but saving Man Utd for later tougher weeks" },
+      { team: "Tottenham", matchup: "H vs Newcastle", badge: "risky", why: "Newcastle are strong away — risky North London fixture" },
+    ]
+  },
+  {
+    gw: 3, date: "Sep 4–6, 2026", pick: "Man City", ha: "H", opp: "Coventry",
+    stars: 5, use: "2nd ✓", phase: "hot-start",
+    reason: `Perfect 2nd Man City use — promoted <strong>Coventry City</strong> visiting the Etihad in early September. Coventry are adapting to PL pace and quality; Man City are settled into their system. This is one of the most lopsided home fixtures of the entire season. Burn the 2nd Man City pick here rather than risk it later.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Chelsea", badge: "risky", why: "Arsenal vs Chelsea is a genuine 50/50 — far too risky, saving Arsenal for GW6" },
+      { team: "Newcastle", matchup: "H vs Bournemouth", badge: "weaker", why: "Good alternative but Newcastle saved for GW9" },
+      { team: "Chelsea", matchup: "H vs Hull", badge: "weaker", why: "Chelsea H vs Hull is GW4 — even better spot, save it" },
+    ]
+  },
+  {
+    gw: 4, date: "Sep 12–14, 2026", pick: "Chelsea", ha: "H", opp: "Hull",
+    stars: 5, use: "1st", phase: "hot-start",
+    reason: `<strong>Promoted Hull City</strong> visiting Stamford Bridge — Chelsea's strongest home fixture of the early season. Hull are a newly promoted side still finding their feet at PL level. Chelsea have quality throughout their squad and a home crowd advantage. One of the clearest banker picks of the first 10 gameweeks.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Fulham", badge: "weaker", why: "Also good but Liverpool saved for GW11 vs Man Utd (better matchup to burn 2nd use)" },
+      { team: "Tottenham", matchup: "H vs Everton", badge: "weaker", why: "Decent but Spurs saved for GW7 vs promoted Coventry" },
+      { team: "Man Utd", matchup: "A vs Man City", badge: "away", why: "Away at Etihad — do not pick Man Utd away vs Man City ever" },
+    ]
+  },
+  {
+    gw: 5, date: "Sep 18–20, 2026", pick: "Nottm Forest", ha: "H", opp: "Coventry",
+    stars: 4, use: "1st", phase: "hot-start",
+    reason: `Man City and Arsenal both saved; this is Nottm Forest's moment. <strong>City Ground</strong> vs promoted Coventry — the home crowd advantage at Forest is real, and Coventry are likely still struggling with PL quality. Forest in early-season home form are a solid pick. Spares all Tier-1 teams for better matchups.`,
+    alts: [
+      { team: "Tottenham", matchup: "H vs Aston Villa", badge: "risky", why: "Spurs H vs Villa is competitive — too close, saving Spurs for GW7 vs Coventry" },
+      { team: "Newcastle", matchup: "H vs Hull", badge: "weaker", why: "Good alternative — Newcastle H vs Hull is solid too, saved for GW9" },
+      { team: "Brighton", matchup: "A vs Arsenal", badge: "away", why: "Brighton AWAY — Arsenal is strong at home, Brighton is the risky pick here" },
+      { team: "Man City", matchup: "H vs Sunderland", badge: "used", why: "Already used twice — DONE" },
+    ]
+  },
+  {
+    gw: 6, date: "Oct 10–12, 2026", pick: "Arsenal", ha: "H", opp: "Leeds",
+    stars: 4, use: "1st", phase: "elite-tier",
+    reason: `Post international break — Arsenal are defending champions, fully fresh. <strong>Emirates Stadium</strong> vs Leeds: a mid-table side with historically poor away record vs top-six. The PL title holders playing their first home game after an international break is peak stability. Liverpool vs Man City clash this week means those teams cancel each other out as picks.`,
+    alts: [
+      { team: "Chelsea", matchup: "H vs Bournemouth", badge: "weaker", why: "Solid pick but Chelsea saved; already used GW4 — save 2nd use for GW13" },
+      { team: "Man Utd", matchup: "H vs Tottenham", badge: "risky", why: "Man Utd vs Spurs — could go either way, too risky" },
+      { team: "Liverpool", matchup: "H vs Man City", badge: "risky", why: "Liverpool vs Man City is the match of the season — avoid both as picks" },
+    ]
+  },
+  {
+    gw: 7, date: "Oct 17–19, 2026", pick: "Tottenham", ha: "H", opp: "Coventry",
+    stars: 5, use: "1st", phase: "elite-tier",
+    reason: `<strong>Tottenham Hotspur Stadium</strong> vs promoted Coventry — essentially free points. Coventry will be well into a relegation battle by this point and visiting a top-six ground. Spurs' home form vs weaker sides is historically strong. This is the ideal spot for Tottenham's first pick — safe, predictable, high-confidence.`,
+    alts: [
+      { team: "Man City", matchup: "H vs Ipswich", badge: "used", why: "Man City already used twice — DONE" },
+      { team: "Newcastle", matchup: "H vs Aston Villa", badge: "risky", why: "Villa are strong away — Newcastle vs Villa is competitive" },
+      { team: "Liverpool", matchup: "H vs Brighton", badge: "risky", why: "Brighton are tactically disciplined — not a banker even at Anfield" },
+    ]
+  },
+  {
+    gw: 8, date: "Oct 23–25, 2026", pick: "Arsenal", ha: "H", opp: "Everton",
+    stars: 4, use: "2nd ✓", phase: "elite-tier",
+    reason: `Final Arsenal use — <strong>Emirates</strong> vs Everton. Everton historically struggle away at the Emirates and Arsenal at home are the most dangerous team in this division. Burning the 2nd Arsenal pick here is better than waiting for GW12 (H vs Man City — a genuine clash) or GW14 (Tottenham away — too risky). Everton away from home is manageable for Arsenal.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Brighton", badge: "risky", why: "Brighton are tactically solid, not a comfortable home pick" },
+      { team: "Chelsea", matchup: "H vs Tottenham", badge: "risky", why: "London derby — unpredictable and competitive, avoid" },
+      { team: "Man Utd", matchup: "H vs Bournemouth", badge: "weaker", why: "Good option but Man Utd saved for GW12+14 vs weaker sides" },
+    ]
+  },
+  {
+    gw: 9, date: "Oct 31 – Nov 2, 2026", pick: "Newcastle", ha: "H", opp: "Everton",
+    stars: 4, use: "1st", phase: "elite-tier",
+    reason: `<strong>St. James' Park</strong> atmosphere is elite — one of the loudest and most intimidating venues in the PL. Everton are a mid-table side who typically struggle away at big northern grounds. Liverpool vs Arsenal clash this week means the two biggest picks cancel out. Newcastle at home vs Everton is the clear banker of the gameweek.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Arsenal", badge: "risky", why: "Liverpool vs Arsenal — two title contenders, too close to call" },
+      { team: "Arsenal", matchup: "A vs Liverpool", badge: "used", why: "Arsenal already used twice — DONE" },
+      { team: "Man City", matchup: "H vs Brighton", badge: "used", why: "Man City already used twice — DONE" },
+    ]
+  },
+  {
+    gw: 10, date: "Nov 7, 2026", pick: "Everton", ha: "H", opp: "Coventry",
+    stars: 3, use: "1st", phase: "elite-tier",
+    reason: `Genuinely tough week — most top teams are AWAY: Newcastle at Fulham, Liverpool at Crystal Palace, Arsenal is DONE, Man City is DONE. Everton (H vs promoted Coventry) is the best available home pick. Hill Dickinson Stadium vs a promoted side still adapting to PL life. Not glamorous, but survival is about finding the <strong>least bad option</strong>, not the best one.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Hull", badge: "used", why: "Arsenal is DONE (2/2 used)" },
+      { team: "Man City", matchup: "A vs Nottm Forest", badge: "used", why: "Man City is DONE (2/2 used)" },
+      { team: "Newcastle", matchup: "A vs Fulham", badge: "away", why: "Away at Craven Cottage — Fulham's home is a tough venue" },
+      { team: "Man Utd", matchup: "H vs Aston Villa", badge: "risky", why: "Competitive — saving Man Utd for GW12 vs Brentford (easier)" },
+    ]
+  },
+  {
+    gw: 11, date: "Nov 21, 2026", pick: "Tottenham", ha: "H", opp: "Ipswich",
+    stars: 5, use: "2nd ✓", phase: "elite-tier",
+    reason: `Final Tottenham use — <strong>Tottenham Hotspur Stadium vs promoted Ipswich Town</strong>. By late November, Ipswich are likely deep in a relegation fight. Visiting the 62,000-capacity Spurs ground is an incredibly hostile away trip for a newly promoted side. This is a vastly safer pick than the original plan of Liverpool vs Man Utd (a genuine 50/50 derby). Burning Spurs' 2nd pick here on a promoted side is exactly the right strategy — safe, predictable, high confidence.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Man Utd", badge: "risky", why: "Big derby — Man Utd are 10% title contenders, too close to call. Save Liverpool for GW13 vs Sunderland" },
+      { team: "Man City", matchup: "H vs Fulham", badge: "used", why: "Man City DONE" },
+      { team: "Chelsea", matchup: "H vs Leeds", badge: "weaker", why: "Decent but Chelsea saved for GW14 vs better matchup" },
+    ]
+  },
+  {
+    gw: 12, date: "Nov 28, 2026", pick: "Man Utd", ha: "H", opp: "Brentford",
+    stars: 3, use: "1st", phase: "elite-tier",
+    reason: `Arsenal vs Man City this week — both DONE. Liverpool DONE. <strong>Old Trafford</strong> vs Brentford is the safest available pick. Man Utd at home carry a strong crowd atmosphere and Brentford, while a decent side, are genuine underdogs at Old Trafford. This reserves Chelsea for the following week's better matchup.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Man City", badge: "used", why: "Arsenal DONE — and it's Arsenal vs Man City, impossible matchup anyway" },
+      { team: "Chelsea", matchup: "A vs Nottm Forest", badge: "away", why: "Away game — saving Chelsea 2nd use for GW13 at home" },
+      { team: "Brighton", matchup: "A vs Newcastle", badge: "away", why: "Brighton is away this week — skip" },
+    ]
+  },
+  {
+    gw: 13, date: "Dec 2, 2026", pick: "Liverpool", ha: "H", opp: "Sunderland",
+    stars: 5, use: "2nd ✓", phase: "elite-tier",
+    reason: `Final Liverpool use — <strong>Anfield vs promoted Sunderland</strong>. This is a massive upgrade from the original GW11 plan of Liverpool vs Man Utd. Sunderland are a newly promoted side visiting the most intimidating atmosphere in English football. Liverpool at Anfield against a team fighting for Premier League survival is as close to a guaranteed pick as this pool offers. Perfect spot to exhaust the Liverpool budget.`,
+    alts: [
+      { team: "Chelsea", matchup: "H vs Crystal Palace", badge: "weaker", why: "Also solid — Chelsea saved for GW14 vs Hull or weaker side" },
+      { team: "Man City", matchup: "H vs Leeds", badge: "used", why: "Man City DONE" },
+      { team: "Aston Villa", matchup: "H vs Everton", badge: "weaker", why: "Villa saved for GW21+GW23 (better matchups vs Man Utd and Ipswich)" },
+    ]
+  },
+  {
+    gw: 14, date: "Dec 5, 2026", pick: "Chelsea", ha: "H", opp: "Liverpool",
+    stars: 4, use: "2nd ✓", phase: "elite-tier",
+    reason: `Final Chelsea use — <strong>Stamford Bridge vs Liverpool</strong>. Liverpool are DONE as a pick (used GW2 and GW13) but here they're the opponent. Chelsea at home is a reliable fortress and Stamford Bridge is a notoriously difficult venue for visitors, even Liverpool. Chelsea's squad quality at home gives them a real edge in this fixture. Exhausting the Chelsea budget against a top-quality opponent is better than saving it for a week where no home options exist.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Chelsea", badge: "used", why: "Liverpool DONE" },
+      { team: "Newcastle", matchup: "H vs Sunderland", badge: "risky", why: "Northeast Derby — emotionally charged, upsets common, skip" },
+      { team: "Tottenham", matchup: "A vs Arsenal", badge: "used", why: "Tottenham DONE — also away at Arsenal, never pick that" },
+    ]
+  },
+  {
+    gw: 15, date: "Dec 12, 2026", pick: "Brighton", ha: "H", opp: "Everton",
+    stars: 3, use: "1st", phase: "mid-tier",
+    reason: `Most top-team options are DONE or away. <strong>Amex Stadium</strong> vs Everton — Brighton's tactical setup at home is disciplined and hard to break down, and they tend to edge mid-table sides. Man City vs Chelsea big clash means both are cancelled out. Brighton at home to Everton is the clearest low-risk pick available.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Leeds", badge: "used", why: "Liverpool DONE" },
+      { team: "Man City", matchup: "H vs Chelsea", badge: "used", why: "Man City DONE" },
+      { team: "Arsenal", matchup: "H vs Bournemouth", badge: "used", why: "Arsenal DONE" },
+      { team: "Aston Villa", matchup: "A vs Coventry", badge: "away", why: "Villa away — not ideal, saving Villa for home games in January" },
+    ]
+  },
+  {
+    gw: 16, date: "Dec 19, 2026", pick: "Brighton", ha: "H", opp: "Ipswich",
+    stars: 5, use: "2nd ✓", phase: "mid-tier",
+    reason: `<strong>Amex Stadium vs Ipswich</strong> — a promoted side making the trip to Brighton in December. Ipswich have historically struggled against established Premier League home sides away from home. Brighton's high defensive line and pressing system is particularly effective against newly promoted teams who sit deep. All Tier-1 teams are either DONE or playing tricky fixtures this week (Man Utd are AWAY at Arsenal — do not pick). Brighton H vs Ipswich is the safest available banker.`,
+    alts: [
+      { team: "Man Utd", matchup: "A vs Arsenal", badge: "away", why: "Man Utd are AWAY at the Emirates — never pick an away game when a home option exists" },
+      { team: "Arsenal", matchup: "H vs Man Utd", badge: "used", why: "Arsenal DONE" },
+      { team: "Liverpool", matchup: "H vs Tottenham", badge: "used", why: "Liverpool DONE" },
+      { team: "Man City", matchup: "H vs Hull", badge: "used", why: "Man City DONE" },
+    ]
+  },
+  {
+    gw: 17, date: "Dec 26, 2026", pick: "⭐ BYE WEEK", ha: "—", opp: "—",
+    stars: 0, use: "bye", phase: "bye",
+    reason: `Boxing Day is the most upset-heavy round in English football history. Teams play on 48 hours recovery from the previous fixture. Arsenal is AWAY at Crystal Palace. Man City is AWAY at Newcastle. Liverpool is AWAY at Hull. <strong>There is no reliable home banker available.</strong> Fatigue, rotation, cold weather, emotional derby atmospheres — using the BYE here is not just safe, it's optimal.`,
+    alts: [
+      { team: "Aston Villa", matchup: "H vs Leeds", badge: "risky", why: "Decent but Boxing Day chaos makes every pick risky — BYE is smarter" },
+      { team: "Man Utd", matchup: "H vs Nottm Forest", badge: "risky", why: "Man Utd saved for GW18 H vs Sunderland — cleaner promoted-side matchup next week" },
+      { team: "Everton", matchup: "H vs Sunderland", badge: "risky", why: "Possible fallback but BYE is the right call here" },
+    ]
+  },
+  {
+    gw: 18, date: "Dec 30, 2026", pick: "Man Utd", ha: "H", opp: "Sunderland",
+    stars: 5, use: "2nd ✓", phase: "mid-tier",
+    reason: `Final Man Utd use — <strong>Old Trafford vs Sunderland</strong>. Promoted side making the trip to Old Trafford on Dec 30. Sunderland away at a top-six ground in the post-Christmas period is about as safe as it gets. Old Trafford crowd of 74,000 will be energised coming off the Christmas fixtures. This is the perfect slot to burn Man Utd's 2nd use — far cleaner than putting them against Arsenal (who they face AWAY in GW16).`,
+    alts: [
+      { team: "Newcastle", matchup: "H vs Nottm Forest", badge: "weaker", why: "Also a solid pick but Man Utd H vs Sunderland is the stronger banker — promoted side vs Old Trafford" },
+      { team: "Aston Villa", matchup: "H vs Liverpool", badge: "risky", why: "Liverpool DONE but Villa vs Liverpool is never easy, even at Villa Park" },
+      { team: "Tottenham", matchup: "H vs Brighton", badge: "used", why: "Tottenham DONE (GW7 + GW11)" },
+    ]
+  },
+  {
+    gw: 19, date: "Jan 2, 2027", pick: "Nottm Forest", ha: "H", opp: "Fulham",
+    stars: 3, use: "2nd ✓", phase: "mid-tier",
+    reason: `Final Forest use — <strong>City Ground vs Fulham</strong>. January 2nd fixture after New Year, Fulham typically have a difficult time at City Ground. Most elite teams are either away or DONE. Forest at home in their compact, atmospheric stadium vs a Fulham side that travels poorly is the cleanest pick available without burning Tottenham too early.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Ipswich", badge: "used", why: "Arsenal DONE" },
+      { team: "Liverpool", matchup: "H vs Coventry", badge: "used", why: "Liverpool DONE" },
+      { team: "Man City", matchup: "H vs Tottenham", badge: "used", why: "Man City DONE" },
+      { team: "Tottenham", matchup: "A vs Man City", badge: "away", why: "Spurs AWAY at Etihad — never pick an away game when home options exist" },
+    ]
+  },
+  {
+    gw: 20, date: "Jan 6–9, 2027", pick: "Newcastle", ha: "H", opp: "TBD",
+    stars: 3, use: "2nd ✓", phase: "mid-tier",
+    reason: `Final Newcastle use — <strong>St. James' Park</strong>. With all Tier-1 and most Tier-2 teams now exhausted, Newcastle at home is the strongest available pick. 52,000 passionate Geordies create one of the loudest atmospheres in the league, and Newcastle's home record against mid-table sides is consistently strong. Aston Villa haven't been unlocked yet — saving them for GW21's confirmed home fixture vs Man Utd. Note: Tottenham also home this week but they are DONE (used GW7 + GW11 — max 2 uses reached).`,
+    alts: [
+      { team: "Tottenham", matchup: "H vs Crystal Palace", badge: "used", why: "Tottenham DONE — already used GW7 and GW11, cannot pick a 3rd time" },
+      { team: "Man Utd", matchup: "H vs Leeds", badge: "used", why: "Man Utd DONE (GW12 + GW18)" },
+      { team: "Aston Villa", matchup: "A vs Hull", badge: "away", why: "Villa AWAY — saving Villa for GW21 home vs Man Utd" },
+    ]
+  },
+  {
+    gw: 21, date: "Jan 16, 2027", pick: "Aston Villa", ha: "H", opp: "Man Utd",
+    stars: 4, use: "1st", phase: "survival",
+    reason: `<strong>Villa Park vs Manchester United</strong>. All Tier-1 teams are now exhausted. Aston Villa at home is one of the most difficult grounds for visiting teams in the PL. Man Utd historically struggle away from Old Trafford and Villa's home atmosphere is electric. With 52,000 fans behind them, Villa are genuine favorites here — strongest pick available from the remaining budget.`,
+    alts: [
+      { team: "Man City", matchup: "H vs Nottm Forest", badge: "used", why: "Man City DONE" },
+      { team: "Liverpool", matchup: "H vs Crystal Palace", badge: "used", why: "Liverpool DONE" },
+      { team: "Chelsea", matchup: "H vs Sunderland", badge: "used", why: "Chelsea DONE" },
+      { team: "Hull", matchup: "H vs Arsenal", badge: "risky", why: "Hull is HOME vs Arsenal but picking Hull to beat Arsenal is far too risky" },
+    ]
+  },
+  {
+    gw: 22, date: "Jan 23, 2027", pick: "Fulham", ha: "H", opp: "Aston Villa",
+    stars: 3, use: "1st", phase: "survival",
+    reason: `<strong>Craven Cottage vs Aston Villa away</strong>. Most top-side picks exhausted. Craven Cottage is a historic, tight, intimidating ground where Fulham punch above their weight at home. Aston Villa are DONE as a pick but here they're the OPPONENT — Villa away from home are less formidable. Fulham's home form vs top-half sides is often competitive and this is the best available home pick this week.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Newcastle", badge: "used", why: "Arsenal DONE" },
+      { team: "Brighton", matchup: "H vs Man City", badge: "used", why: "Brighton DONE (and vs Man City is risky)" },
+      { team: "Crystal Palace", matchup: "H vs Tottenham", badge: "weaker", why: "Decent alternative — saved for GW25 midweek" },
+      { team: "Leeds", matchup: "H vs Chelsea", badge: "risky", why: "Leeds vs Chelsea at home — competitive but Leeds picking against Chelsea is uncertain" },
+    ]
+  },
+  {
+    gw: 23, date: "Jan 30, 2027", pick: "Aston Villa", ha: "H", opp: "Ipswich",
+    stars: 5, use: "2nd ✓", phase: "survival",
+    reason: `Final Villa use — and the best possible 2nd pick. <strong>Villa Park vs promoted Ipswich Town</strong>. By late January, Ipswich will be a team fighting for their PL lives, visiting one of the most intimidating home grounds in the country. This is the last truly comfortable pick before the season becomes a genuine grind. Ipswich away at Villa = banker.`,
+    alts: [
+      { team: "Man City", matchup: "H vs Arsenal", badge: "used", why: "Man City DONE" },
+      { team: "Liverpool", matchup: "H vs Everton", badge: "used", why: "Liverpool DONE — and Merseyside derbies are notoriously unpredictable" },
+      { team: "Chelsea", matchup: "H vs Nottm Forest", badge: "used", why: "Chelsea DONE" },
+    ]
+  },
+  {
+    gw: 24, date: "Feb 6–7, 2027", pick: "Brentford", ha: "H", opp: "TBD",
+    stars: 3, use: "1st", phase: "survival",
+    reason: `Arsenal vs Liverpool consume each other this week — both DONE anyway. <strong>Gtech Community Stadium</strong> is one of the toughest away grounds in the PL — compact, loud, and historically unkind to visitors. Brentford at home vs a mid-table or weaker side is the best available pick. Verify the specific opponent before submitting.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Liverpool", badge: "used", why: "Both DONE" },
+      { team: "Fulham", matchup: "H vs Man City", badge: "risky", why: "Fulham at home vs Man City — possible but Man City are strong visitors" },
+      { team: "Ipswich", matchup: "H vs Tottenham", badge: "risky", why: "Picking promoted Ipswich vs Tottenham is a big ask" },
+    ]
+  },
+  {
+    gw: 25, date: "Feb 10, 2027", pick: "Crystal Palace", ha: "H", opp: "TBD",
+    stars: 3, use: "1st", phase: "survival",
+    reason: `Midweek fixture — Tottenham vs Man City, Aston Villa vs Bournemouth, Chelsea vs Newcastle are all available but Tier-1 teams DONE. <strong>Selhurst Park</strong> is famously hostile — Crystal Palace at home in front of the Holmesdale Stand is genuinely difficult for visiting sides. Pick Palace at home vs a comparable or weaker opponent.`,
+    alts: [
+      { team: "Tottenham", matchup: "H vs Man City", badge: "used", why: "Tottenham DONE" },
+      { team: "Aston Villa", matchup: "H vs Bournemouth", badge: "used", why: "Aston Villa DONE" },
+      { team: "Brentford", matchup: "TBD", badge: "weaker", why: "Saved for GW24 — use Crystal Palace this midweek instead" },
+    ]
+  },
+  {
+    gw: 26, date: "Feb 20, 2027", pick: "Bournemouth", ha: "H", opp: "TBD",
+    stars: 3, use: "1st", phase: "survival",
+    reason: `Arsenal, Liverpool, Man City, Chelsea all have home games this week but all DONE. <strong>Vitality Stadium</strong> vs a weaker or mid-table side — Bournemouth punch above their weight at home, and their compact ground is tough for travelling sides. Bournemouth's home form vs lower-half teams is reliable. First pick for Bournemouth, save 2nd for GW32.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Fulham", badge: "used", why: "Arsenal DONE" },
+      { team: "Liverpool", matchup: "H vs Hull", badge: "used", why: "Liverpool DONE" },
+      { team: "Man City", matchup: "H vs Newcastle", badge: "used", why: "Man City DONE" },
+    ]
+  },
+  {
+    gw: 27, date: "Feb 27, 2027", pick: "Brentford", ha: "H", opp: "TBD",
+    stars: 3, use: "2nd ✓", phase: "survival",
+    reason: `Final Brentford use. Chelsea is AWAY at Aston Villa, Tottenham is AWAY (Liverpool). <strong>Gtech vs a weaker away side</strong> — Brentford's home record is reliable and their squad is well-suited to grinding home wins. This exhausts the Brentford budget on a home fixture rather than being forced into an away pick later.`,
+    alts: [
+      { team: "Chelsea", matchup: "A vs Aston Villa", badge: "used", why: "Chelsea DONE — also away" },
+      { team: "Everton", matchup: "H vs ?", badge: "weaker", why: "Everton 2nd pick saved for GW30 (confirmed H vs Tottenham)" },
+      { team: "Leeds", matchup: "H vs ?", badge: "risky", why: "Leeds saved for GW29+35" },
+    ]
+  },
+  {
+    gw: 28, date: "Mar 3, 2027", pick: "Crystal Palace", ha: "H", opp: "TBD",
+    stars: 3, use: "2nd ✓", phase: "survival",
+    reason: `Final Crystal Palace use — midweek fixture. Arsenal is HOME but DONE. Chelsea HOME but DONE. Man City HOME but DONE. <strong>Selhurst Park</strong> vs a weaker or mid-table opponent — using the 2nd Palace pick in a midweek fixture means less fatigue impact and a compact atmospheric ground. Exhaust the Palace budget here before the run-in.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Crystal Palace", badge: "used", why: "Arsenal DONE" },
+      { team: "Chelsea", matchup: "H vs Coventry", badge: "used", why: "Chelsea DONE" },
+      { team: "Man City", matchup: "H vs Everton", badge: "used", why: "Man City DONE" },
+    ]
+  },
+  {
+    gw: 29, date: "Mar 13, 2027", pick: "Leeds", ha: "H", opp: "TBD",
+    stars: 3, use: "1st", phase: "run-in",
+    reason: `<strong>Elland Road</strong> — one of the most atmospheric grounds in England with 37,000 passionate fans. Leeds' home support is relentless and opposition teams find Elland Road genuinely hostile. Mid-March fixtures see many European clubs rotating — Leeds benefit from full domestic focus. Pick Leeds at home vs a comparable or weaker side.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Ipswich", badge: "used", why: "Liverpool DONE" },
+      { team: "Tottenham", matchup: "H vs Nottm Forest", badge: "used", why: "Tottenham DONE" },
+      { team: "Bournemouth", matchup: "H vs ?", badge: "weaker", why: "Saving Bournemouth 2nd pick for GW32" },
+    ]
+  },
+  {
+    gw: 30, date: "Mar 20, 2027", pick: "Everton", ha: "H", opp: "Tottenham",
+    stars: 3, use: "2nd ✓", phase: "run-in",
+    reason: `<strong>Confirmed fixture</strong>: Everton HOME vs Tottenham (from Tottenham's official schedule). Tottenham DONE as a pick but here they're the opponent. Hill Dickinson Stadium vs Tottenham — Everton at home in a mid-season clash where both clubs are pushing for positions. Everton historically hold their own at home vs top-half sides. Man City vs Man Utd this week means those picks are irrelevant anyway.`,
+    alts: [
+      { team: "Man City", matchup: "H vs Man Utd", badge: "used", why: "Man City DONE" },
+      { team: "Arsenal", matchup: "H vs Sunderland", badge: "used", why: "Arsenal DONE" },
+      { team: "Fulham", matchup: "A vs Liverpool", badge: "away", why: "Fulham away at Liverpool — not a home pick" },
+    ]
+  },
+  {
+    gw: 31, date: "Apr 10, 2027", pick: "Fulham", ha: "H", opp: "Chelsea",
+    stars: 3, use: "2nd ✓", phase: "run-in",
+    reason: `<strong>Confirmed fixture</strong>: Fulham HOME vs Chelsea (from Chelsea's official schedule). <strong>Craven Cottage</strong> hosts a West London derby — Fulham at home vs Chelsea is always competitive and Fulham often punch above their weight in this fixture. Chelsea is DONE as a pick, here they're the opponent. Craven Cottage's tight capacity and partisan crowd gives Fulham genuine home advantage.`,
+    alts: [
+      { team: "Liverpool", matchup: "H vs Newcastle", badge: "used", why: "Liverpool DONE" },
+      { team: "Chelsea", matchup: "H vs Fulham", badge: "used", why: "Chelsea DONE — also it's the Fulham match" },
+      { team: "Brentford", matchup: "TBD", badge: "used", why: "Brentford DONE" },
+    ]
+  },
+  {
+    gw: 32, date: "Apr 17, 2027", pick: "Bournemouth", ha: "H", opp: "TBD",
+    stars: 3, use: "2nd ✓", phase: "run-in",
+    reason: `Final Bournemouth use — April home fixture at <strong>Vitality Stadium</strong>. Most elite picks are exhausted. Bournemouth at home in April are a well-organised, compact unit who make life difficult for visiting teams. European rotation from top clubs weakens away squads — ideal time for a Bournemouth home pick. Arsenal is AWAY at Aston Villa, Man City is HOME (DONE).`,
+    alts: [
+      { team: "Man City", matchup: "H vs Crystal Palace", badge: "used", why: "Man City DONE" },
+      { team: "Arsenal", matchup: "A vs Aston Villa", badge: "away", why: "Arsenal AWAY — never pick away games when home options exist" },
+      { team: "Leeds", matchup: "TBD", badge: "weaker", why: "Saving Leeds 2nd pick for GW35 vs Arsenal at Elland Road" },
+    ]
+  },
+  {
+    gw: 33, date: "Apr 24, 2027", pick: "Sunderland", ha: "H", opp: "TBD",
+    stars: 2, use: "1st", phase: "run-in",
+    reason: `Deep into the season — most reliable picks are gone. <strong>Stadium of Light</strong> holds 49,000 fans and Sunderland's home support is passionate. Pick Sunderland at home vs a similarly-ranked or weaker side. The key here is finding Sunderland hosting Hull, Coventry, Ipswich or another bottom-half side — check fixtures before submitting.`,
+    alts: [
+      { team: "Bournemouth", matchup: "A vs Arsenal", badge: "used", why: "Bournemouth DONE" },
+      { team: "Man City", matchup: "A vs Chelsea", badge: "used", why: "Man City DONE — also away" },
+      { team: "Ipswich", matchup: "TBD", badge: "risky", why: "Too weak to pick — only if genuinely no other option" },
+    ]
+  },
+  {
+    gw: 34, date: "May 1, 2027", pick: "Hull", ha: "H", opp: "TBD",
+    stars: 2, use: "1st", phase: "run-in",
+    reason: `Penultimate month — <strong>MKM Stadium</strong> with Hull at home. Picking Hull requires finding them against another promoted or bottom-half side. Arsenal HOME but DONE. Liverpool HOME but DONE (vs Chelsea). European squads rotating heavily by now. Hull hosting Ipswich, Coventry, or Sunderland is the ideal scenario — verify the matchup before picking.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Tottenham", badge: "used", why: "Arsenal DONE" },
+      { team: "Liverpool", matchup: "H vs Chelsea", badge: "used", why: "Liverpool DONE" },
+      { team: "Leeds", matchup: "TBD", badge: "weaker", why: "Saving Leeds for GW35 — confirmed H vs Arsenal at Elland Road" },
+    ]
+  },
+  {
+    gw: 35, date: "May 8, 2027", pick: "Leeds", ha: "H", opp: "Arsenal",
+    stars: 3, use: "2nd ✓", phase: "run-in",
+    reason: `<strong>Confirmed fixture</strong>: Leeds HOME vs Arsenal (Arsenal's official schedule: May 8, Leeds away). <strong>Elland Road</strong> in May — title race pressure on Arsenal, emotional last-home-game atmosphere for Leeds, massive crowd. Leeds beating Arsenal at Elland Road is absolutely plausible and has happened repeatedly in football history. Home underdogs in an electric atmosphere is the survival pool's best late-season play.`,
+    alts: [
+      { team: "Arsenal", matchup: "A vs Leeds", badge: "used", why: "Arsenal DONE — and they're the opponent here" },
+      { team: "Chelsea", matchup: "A vs Tottenham", badge: "used", why: "Chelsea DONE — also away" },
+      { team: "Man City", matchup: "H vs Liverpool", badge: "used", why: "Man City DONE" },
+    ]
+  },
+  {
+    gw: 36, date: "May 15, 2027", pick: "Sunderland", ha: "H", opp: "TBD",
+    stars: 2, use: "2nd ✓", phase: "run-in",
+    reason: `Final Sunderland use — second-to-last home pick in the budget. <strong>Stadium of Light</strong> in mid-May, Sunderland fighting for survival or mid-table security. The home crowd will be fully behind them. Target Sunderland vs another promoted/bottom-half opponent — avoid weeks where they host top-six clubs. Arsenal away but DONE, Man City DONE.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Nottm Forest", badge: "used", why: "Arsenal DONE" },
+      { team: "Liverpool", matchup: "H vs Brentford", badge: "used", why: "Liverpool DONE" },
+      { team: "Hull", matchup: "TBD", badge: "risky", why: "Hull 2nd pick saved for GW37 — use Sunderland here" },
+    ]
+  },
+  {
+    gw: 37, date: "May 23, 2027", pick: "Hull", ha: "H", opp: "TBD",
+    stars: 2, use: "2nd ✓", phase: "run-in",
+    reason: `Final Hull use — penultimate matchweek. If Hull are safe from relegation, they'll be playing freely at home with nothing to lose. <strong>MKM Stadium</strong> vs whatever opposition falls their way. By this stage of the season most other pool competitors will have been eliminated — survival is about not making mistakes, not picking perfect winners.`,
+    alts: [
+      { team: "Arsenal", matchup: "A vs Everton", badge: "used", why: "Arsenal DONE — also away" },
+      { team: "Man City", matchup: "H vs Aston Villa", badge: "used", why: "Man City DONE" },
+      { team: "Ipswich", matchup: "TBD", badge: "risky", why: "Last resort if Hull fixture looks dangerous" },
+    ]
+  },
+  {
+    gw: 38, date: "May 30, 2027", pick: "Ipswich", ha: "H", opp: "TBD",
+    stars: 2, use: "1st", phase: "run-in",
+    reason: `<strong>Final Day</strong> — all 10 fixtures kick off simultaneously at 4pm. Ipswich at home on the final day — they could be safe or fighting for survival, but the home crowd will make <strong>Portman Road</strong> electric regardless. At this point you've made it 37 weeks; pick whoever is HOME and NOT in a relegation six-pointer against a top-three club. Ipswich is the fallback pick if better options have been exhausted. Confirm opponent before submitting.`,
+    alts: [
+      { team: "Arsenal", matchup: "H vs Brighton", badge: "used", why: "Arsenal DONE" },
+      { team: "Liverpool", matchup: "H vs Bournemouth", badge: "used", why: "Liverpool DONE" },
+      { team: "Man City", matchup: "A vs Sunderland", badge: "used", why: "Man City DONE — also away" },
+    ]
+  },
+];
+
+const PHASES = {
+  "hot-start":  { label: "Phase 1 — Hot Start",   desc: "GW1–5 · Burn top teams vs promoted sides" },
+  "elite-tier": { label: "Phase 2 — Elite Tier",   desc: "GW6–14 · Arsenal, Liverpool, Chelsea, Spurs, Man Utd" },
+  "mid-tier":   { label: "Phase 3 — Mid Tier",     desc: "GW15–20 · Brighton, Newcastle, Forest, Spurs" },
+  "bye":        { label: "Phase 4 — BYE",           desc: "GW17 · Boxing Day" },
+  "survival":   { label: "Phase 5 — Survival Grind",desc: "GW21–23 · Aston Villa anchor" },
+  "run-in":     { label: "Phase 6 — Run-In",        desc: "GW24–38 · Lower-tier home picks" },
+};
+
+function stars(n) {
+  if (n === 0) return '';
+  return '★'.repeat(n) + '☆'.repeat(5 - n);
+}
+
+function renderBudget(currentGw) {
+  const grid = document.getElementById('budget-grid');
+  grid.innerHTML = '';
+  BUDGET.forEach(t => {
+    const use1Done = t.uses[0] <= currentGw;
+    const use2Done = t.uses[1] && t.uses[1] <= currentGw;
+    const exhausted = t.uses.length === 0 || (t.uses[1] && use2Done) || (t.uses.length === 1 && use1Done);
+    const chip = document.createElement('div');
+    chip.className = 'budget-chip' + (exhausted ? ' exhausted' : '');
+    const dot1 = `<span class="dot ${use1Done ? 'used' : ''}"></span>`;
+    const dot2 = t.uses[1] ? `<span class="dot ${use2Done ? 'used' : ''}"></span>` : '';
+    chip.innerHTML = `<div class="dots">${dot1}${dot2}</div>${t.team}`;
+    grid.appendChild(chip);
+  });
+}
+
+let currentFilter = 'all';
+
+function filter(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGWs();
+}
+
+function renderGWs() {
+  const container = document.getElementById('gw-container');
+  container.innerHTML = '';
+
+  const elite = new Set([1,2,3,4,5,6,7,8,9,11]);
+  const risky = new Set([10,22,29,33,34,35,36,37,38]);
+
+  let lastPhase = null;
+  let currentGrid = null;
+
+  GWS.forEach(g => {
+    const isDone = g.gw < CURRENT_GW;
+    const isCurrent = g.gw === CURRENT_GW;
+    const isBye = g.use === 'bye';
+
+    // Filters
+    if (currentFilter === 'upcoming' && isDone) return;
+    if (currentFilter === 'done' && !isDone) return;
+    if (currentFilter === 'elite' && !elite.has(g.gw)) return;
+    if (currentFilter === 'risky' && !risky.has(g.gw)) return;
+
+    // Phase divider
+    const phase = g.phase === 'bye' ? 'mid-tier' : g.phase;
+    if (phase !== lastPhase && currentFilter === 'all') {
+      const ph = PHASES[g.phase] || PHASES[phase];
+      const divider = document.createElement('div');
+      divider.className = 'phase-header';
+      divider.innerHTML = `<span>${ph.label}</span> ${ph.desc}`;
+      container.appendChild(divider);
+      currentGrid = document.createElement('div');
+      currentGrid.className = 'gw-grid';
+      container.appendChild(currentGrid);
+      lastPhase = phase;
+    }
+    if (!currentGrid || currentFilter !== 'all') {
+      if (!currentGrid || currentFilter !== 'all') {
+        if (!document.querySelector('.gw-grid-single')) {
+          currentGrid = document.createElement('div');
+          currentGrid.className = 'gw-grid gw-grid-single';
+          container.appendChild(currentGrid);
+        } else {
+          currentGrid = document.querySelector('.gw-grid-single');
+        }
+      }
+    }
+
+    const card = document.createElement('div');
+    card.className = 'gw-card' +
+      (isDone ? ' done-card' : '') +
+      (isCurrent ? ' current' : '') +
+      (isBye ? ' bye-card' : '');
+
+    if (isCurrent) {
+      card.innerHTML += `<div class="current-badge">This Week</div>`;
+    }
+
+    if (isBye) {
+      card.innerHTML += `
+        <div class="card-header">
+          <div class="gw-num">GW ${g.gw}</div>
+          <div class="card-title-block">
+            <div class="card-date">${g.date}</div>
+            <div class="card-pick" style="color:var(--pl-pink)">⭐ BYE WEEK</div>
+          </div>
+        </div>
+        <div class="bye-content">
+          <div class="bye-icon">🛌</div>
+          <div class="bye-title">BYE WEEK ACTIVATED</div>
+          <div class="bye-desc">No pick required. Boxing Day chaos — fatigue, rotation, upset-heavy.<br>Best possible week to rest your lifeline.</div>
+        </div>
+        <div class="card-footer">
+          <div class="use-pill bye-use">BYE Used</div>
+          <div class="result-pill pending">Skipped</div>
+        </div>`;
+    } else {
+      const altRows = g.alts.map(a => `
+        <div class="alt-row">
+          <div class="alt-team">${a.team}</div>
+          <div class="alt-reason">${a.matchup} — ${a.why}</div>
+          <div class="alt-badge ${a.badge}">${a.badge}</div>
+        </div>`).join('');
+
+      const usePillClass = g.use.includes('2nd') ? 'second' : (g.use === '1st' ? 'first' : '');
+
+      card.innerHTML += `
+        <div class="card-header">
+          <div class="gw-num">GW ${g.gw}</div>
+          <div class="card-title-block">
+            <div class="card-date">${g.date}</div>
+            <div class="card-pick">
+              ${g.pick}
+              <span class="home-badge">${g.ha}</span>
+              <span class="vs">vs</span>
+              <span class="opp">${g.opp}</span>
+            </div>
+            <div class="stars">${stars(g.stars)}</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="pick-reason">${g.reason}</div>
+          <div class="alts-label">Why not the others?</div>
+          ${altRows}
+        </div>
+        <div class="card-footer">
+          <div class="use-pill ${usePillClass}">${g.use} use</div>
+          <div class="result-pill pending">Pending</div>
+        </div>`;
+    }
+
+    currentGrid.appendChild(card);
+  });
+}
+
+// Single grid fallback for filtered views
+function ensureSingleGrid() {
+  if (!document.querySelector('.gw-grid-single')) {
+    const g = document.createElement('div');
+    g.className = 'gw-grid gw-grid-single';
+    document.getElementById('gw-container').appendChild(g);
+  }
+}
+
+renderBudget(CURRENT_GW);
+renderGWs();
+</script>
+</body>
+</html>
