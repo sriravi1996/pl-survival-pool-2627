@@ -437,8 +437,8 @@ const BUDGET = [
   { team: "Man City",    uses: [1, 3],  stars: 5 },
   { team: "Arsenal",     uses: [6, 8],  stars: 5 },
   { team: "Liverpool",   uses: [2, 13], stars: 5 },
-  { team: "Chelsea",     uses: [4, 14], stars: 4 },
-  { team: "Man Utd",     uses: [12,18], stars: 4 },
+  { team: "Chelsea",     uses: [4, 12], stars: 4 },
+  { team: "Man Utd",     uses: [14,18], stars: 4 },
   { team: "Tottenham",   uses: [7, 11], stars: 4 },
   { team: "Brighton",    uses: [15,16], stars: 3 },
   { team: "Newcastle",   uses: [9, 20], stars: 3 },
@@ -568,16 +568,16 @@ const GWS = [
     alts: [
       { team: "Liverpool", matchup: "H vs Man Utd", badge: "risky", why: "Big derby — Man Utd are 10% title contenders, too close to call. Save Liverpool for GW13 vs Sunderland" },
       { team: "Man City", matchup: "H vs Fulham", badge: "used", why: "Man City DONE" },
-      { team: "Chelsea", matchup: "H vs Leeds", badge: "weaker", why: "Decent but Chelsea saved for GW14 vs better matchup" },
+      { team: "Chelsea", matchup: "H vs Leeds", badge: "weaker", why: "Decent but Chelsea already used GW4+GW12 — both uses done" },
     ]
   },
   {
-    gw: 12, date: "Nov 28, 2026", pick: "Man Utd", ha: "H", opp: "Brentford",
-    stars: 3, use: "1st", phase: "elite-tier",
-    reason: `Arsenal vs Man City this week — both DONE. Liverpool DONE. <strong>Old Trafford</strong> vs Brentford is the safest available pick. Man Utd at home carry a strong crowd atmosphere and Brentford, while a decent side, are genuine underdogs at Old Trafford. This reserves Chelsea for the following week's better matchup.`,
+    gw: 12, date: "Nov 28, 2026", pick: "Chelsea", ha: "H", opp: "Nottm Forest",
+    stars: 4, use: "2nd ✓", phase: "elite-tier",
+    reason: `Final Chelsea use — <strong>Stamford Bridge vs Nottingham Forest</strong>. Arsenal vs Man City this week — both DONE. Liverpool DONE. Chelsea at home is the cleaner pick over Man Utd H vs Brentford: Stamford Bridge is a tighter, more intimidating ground for visiting mid-table sides, and Nottm Forest historically struggle against top-six opposition away. Burning Chelsea's 2nd pick here keeps Man Utd free for the much bigger prize — Old Trafford vs promoted Coventry in GW14 (★★★★★).`,
     alts: [
+      { team: "Man Utd", matchup: "H vs Brentford", badge: "risky", why: "Brentford are compact and difficult away — saving Man Utd for GW14 H vs Coventry (promoted side, far safer)" },
       { team: "Arsenal", matchup: "H vs Man City", badge: "used", why: "Arsenal DONE — and it's Arsenal vs Man City, impossible matchup anyway" },
-      { team: "Chelsea", matchup: "A vs Nottm Forest", badge: "away", why: "Away game — saving Chelsea 2nd use for GW13 at home" },
       { team: "Brighton", matchup: "A vs Newcastle", badge: "away", why: "Brighton is away this week — skip" },
     ]
   },
@@ -592,13 +592,13 @@ const GWS = [
     ]
   },
   {
-    gw: 14, date: "Dec 5, 2026", pick: "Chelsea", ha: "H", opp: "Liverpool",
-    stars: 4, use: "2nd ✓", phase: "elite-tier",
-    reason: `Final Chelsea use — <strong>Stamford Bridge vs Liverpool</strong>. Liverpool are DONE as a pick (used GW2 and GW13) but here they're the opponent. Chelsea at home is a reliable fortress and Stamford Bridge is a notoriously difficult venue for visitors, even Liverpool. Chelsea's squad quality at home gives them a real edge in this fixture. Exhausting the Chelsea budget against a top-quality opponent is better than saving it for a week where no home options exist.`,
+    gw: 14, date: "Dec 5, 2026", pick: "Man Utd", ha: "H", opp: "Coventry",
+    stars: 5, use: "1st", phase: "elite-tier",
+    reason: `<strong>Old Trafford vs promoted Coventry City</strong> — one of the safest picks in the entire season. A newly promoted side making the long trip to the Theatre of Dreams in December. Coventry will be deep in a relegation battle, travelling to face a Top-6 side in a 74,000-seat fortress. Chelsea are also home this week but they face Liverpool — far too risky. Man Utd vs promoted Coventry at Old Trafford is about as close to a guaranteed win as this pool offers.`,
     alts: [
+      { team: "Chelsea", matchup: "H vs Liverpool", badge: "risky", why: "Chelsea vs Liverpool — even at Stamford Bridge this is 50/50 or worse. Do not pick." },
+      { team: "Newcastle", matchup: "H vs Sunderland", badge: "risky", why: "Northeast Derby — emotionally charged, upsets extremely common. Skip." },
       { team: "Liverpool", matchup: "H vs Chelsea", badge: "used", why: "Liverpool DONE" },
-      { team: "Newcastle", matchup: "H vs Sunderland", badge: "risky", why: "Northeast Derby — emotionally charged, upsets common, skip" },
-      { team: "Tottenham", matchup: "A vs Arsenal", badge: "used", why: "Tottenham DONE — also away at Arsenal, never pick that" },
     ]
   },
   {
@@ -629,7 +629,7 @@ const GWS = [
     reason: `Boxing Day is the most upset-heavy round in English football history. Teams play on 48 hours recovery from the previous fixture. Arsenal is AWAY at Crystal Palace. Man City is AWAY at Newcastle. Liverpool is AWAY at Hull. <strong>There is no reliable home banker available.</strong> Fatigue, rotation, cold weather, emotional derby atmospheres — using the BYE here is not just safe, it's optimal.`,
     alts: [
       { team: "Aston Villa", matchup: "H vs Leeds", badge: "risky", why: "Decent but Boxing Day chaos makes every pick risky — BYE is smarter" },
-      { team: "Man Utd", matchup: "H vs Nottm Forest", badge: "risky", why: "Man Utd saved for GW18 H vs Sunderland — cleaner promoted-side matchup next week" },
+      { team: "Man Utd", matchup: "H vs Nottm Forest", badge: "risky", why: "Man Utd saved for GW18 H vs Sunderland — another promoted side, far cleaner pick next week" },
       { team: "Everton", matchup: "H vs Sunderland", badge: "risky", why: "Possible fallback but BYE is the right call here" },
     ]
   },
